@@ -1,8 +1,11 @@
+import { Link } from 'react-router-dom';
+import { AppRoute } from '../../const';
+
 function PageNotFound(): JSX.Element {
   return (
-    <div className="page-not-found">
-      <a href="/">404 Not Found</a>
-    </div>
+    <Link className="page-not-found" to={AppRoute.Root}>
+      page-not-found
+    </Link>
   );
 }
 
