@@ -1,10 +1,12 @@
-import PlaceCard from '../place-card/place-card';
+import PlaceCardList from '../card-list/card-list';
+import { Offers } from '../../types/offer';
 
 type MainPageProps = {
   amountOffers: number;
+  offers: Offers;
 }
 
-function MainPage({amountOffers}: MainPageProps): JSX.Element {
+function MainPage({amountOffers, offers}: MainPageProps): JSX.Element {
   return (
     <div className="page page--gray page--main">
       <header className="header">
@@ -94,12 +96,7 @@ function MainPage({amountOffers}: MainPageProps): JSX.Element {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                <PlaceCard/>
-                <PlaceCard/>
-                <PlaceCard/>
-                <PlaceCard/>
-                <PlaceCard/>
-                <PlaceCard/>
+                {<PlaceCardList offers={offers}/>}
               </div>
             </section>
             <div className="cities__right-section">
