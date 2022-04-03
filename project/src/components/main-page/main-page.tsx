@@ -1,5 +1,8 @@
 import PlaceCardList from '../card-list/card-list';
+import MapCity from '../map/map';
+import Logo from '../logo/logo';
 import { Offers } from '../../types/offer';
+import { useState } from 'react';
 
 type MainPageProps = {
   amountOffers: number;
@@ -7,15 +10,22 @@ type MainPageProps = {
 }
 
 function MainPage({amountOffers, offers}: MainPageProps): JSX.Element {
+  const[activeOffer, setActiveOffer] = useState(0);
+
+  const handleHover = (id:number) => {
+    const currentPoint = offers.find((offer) => offer.id === id,
+    );
+    if(currentPoint){
+      setActiveOffer(currentPoint.id);
+    }
+  };
   return (
     <div className="page page--gray page--main">
       <header className="header">
         <div className="container">
           <div className="header__wrapper">
             <div className="header__left">
-              <a className="header__logo-link header__logo-link--active">
-                <img className="header__logo" src="img/logo.svg" alt="6 cities logo" width="81" height="41"/>
-              </a>
+              <Logo />
             </div>
             <nav className="header__nav">
               <ul className="header__nav-list">
@@ -96,11 +106,15 @@ function MainPage({amountOffers, offers}: MainPageProps): JSX.Element {
                 </ul>
               </form>
               <div className="cities__places-list places__list tabs__content">
-                {<PlaceCardList offers={offers}/>}
+                {<PlaceCardList offers={offers} onOfferHover={handleHover}/>}
               </div>
             </section>
             <div className="cities__right-section">
-              <section className="cities__map map"></section>
+              {offers.length && (
+                <section className="cities__map map">
+                  <MapCity offers={offers} activeOffer={activeOffer}/>
+                </section>
+              )}
             </div>
           </div>
         </div>
