@@ -31,3 +31,5 @@ export type Location = {
 };
 
 export type Offers = Offer[];
+
+export type OffersSortingType = 'none' | 'byPriceUp' | 'byPriceDown' | 'byRatingDown';
