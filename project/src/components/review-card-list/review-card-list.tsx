@@ -1,17 +1,16 @@
 import ReviewCard from '../review-card/review-card';
-import { Review } from '../../types/review';
-import { reviews } from '../../mocks/reviews';
+import {Comment} from '../../types/offers';
 
-function ReviewCardList(): JSX.Element {
+function ReviewCardList(props: { comments: Comment[] }): JSX.Element {
+  const { comments } = props;
+
   return (
-    <>
-      <h2 className="reviews__title">Reviews &middot;<span className="reviews__amount">{reviews.length}</span></h2>
-      <ul className="reviews__list">
-        {reviews.map((reviewItem: Review) => (
-          <ReviewCard review={reviewItem} key={reviewItem.id} />
-        ))}
-      </ul>
-    </>
+    <ul className="reviews__list">
+      {comments.map((comment) => (
+        <ReviewCard key={comment.id} comment={comment} />
+      ))}
+    </ul>
   );
 }
+
 export default ReviewCardList;

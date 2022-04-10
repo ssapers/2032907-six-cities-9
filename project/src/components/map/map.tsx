@@ -1,43 +1,68 @@
+import {useRef, useEffect} from 'react';
+import {Icon, Marker} from 'leaflet';
 import useMap from '../../hooks/useMap';
-import 'leaflet/dist/leaflet.css';
-import { useRef, useEffect } from 'react';
-import { Icon, Marker } from 'leaflet';
-import { Offers } from '../../types/offer';
+import {MapProps, MapType} from '../../types/other-types';
+import {Pins, IMG_URL} from '../../const';
 
-type MapProps = {
-  offers: Offers,
-  activeOffer: number
-};
+function getClassName(type: MapType ): string {
+  const mapping = {
+    main: 'cities__map map',
+    room: 'property__map map',
+  };
+  return mapping[type];
+}
 
 const defaultCustomIcon = new Icon({
-  iconUrl: 'https://assets.htmlacademy.ru/content/intensive/javascript-1/demo/interactive-map/pin.svg',
-  iconSize: [40, 40],
-  iconAnchor: [20, 40]});
+  iconUrl: `${IMG_URL}${Pins.Normal}`,
+  iconSize: [28, 40],
+  iconAnchor: [20, 40],
+});
 
 const currentCustomIcon = new Icon({
-  iconUrl: 'https://assets.htmlacademy.ru/content/intensive/javascript-1/demo/interactive-map/main-pin.svg',
-  iconSize: [40, 40],
-  iconAnchor: [20, 40]});
+  iconUrl: `${IMG_URL}${Pins.Active}`,
+  iconSize: [28, 40],
+  iconAnchor: [20, 40],
+});
 
-function MapCity(props: MapProps): JSX.Element {
-  const { offers, activeOffer} = props;
+const useMapAdapter = (props: Omit<MapProps, 'type'>)=>{
+  const { city, points, selectedPoint } = props;
 
   const mapRef = useRef(null);
-  const map = useMap(mapRef, offers[0].location);
+  const map = useMap(mapRef, city);
 
   useEffect(() => {
+    const markers: Marker[] = [];
     if (map) {
-      offers.forEach(({ id, location: { latitude, longitude } }) => {
-        const marker = new Marker({ lat: latitude, lng: longitude });
-
+      points.forEach((point) => {
+        const marker = new Marker({
+          lat: point.location.latitude,
+          lng: point.location.longitude,
+        });
         marker
           .setIcon(
-            id === activeOffer ? currentCustomIcon : defaultCustomIcon)
+            selectedPoint !== undefined && point.id === selectedPoint
+              ? currentCustomIcon
+              : defaultCustomIcon,
+          )
           .addTo(map);
+        markers.push(marker);
       });
     }
-  }, [map, offers, activeOffer]);
+    return () => {
+      markers.forEach((marker) => {
+        if (map) {
+          marker.removeFrom(map);
+        }
+      });
+    };
+  }, [map, points, selectedPoint]);
+  return mapRef;
+};
 
-  return <div style={{ height: '500px' }} ref={mapRef}></div>;
+function Map({city, points, selectedPoint, type}: MapProps): JSX.Element {
+  const mapRef = useMapAdapter({city, points, selectedPoint});
+
+  return <section ref={mapRef} className={getClassName(type)}></section>;
 }
-export default MapCity;
+
+export default Map;

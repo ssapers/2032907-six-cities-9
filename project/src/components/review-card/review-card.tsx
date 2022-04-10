@@ -1,33 +1,32 @@
-import { Review } from '../../types/review';
+import {Comment} from '../../types/offers';
+import {getRatingStyleData} from '../../services/utils';
 
-type ReviewProps = {
-  review: Review;
-}
-
-function ReviewCard(props: ReviewProps): JSX.Element {
-  const { review } = props;
-  const { user, rating, comment, date } = review;
+function ReviewCard(props: { comment: Comment }): JSX.Element {
+  const { comment: {
+    comment, date, rating, user: { avatarUrl, name },
+  } } = props;
+  const displayedDate = new Date(date).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
   return (
-    <li key={review.id} className="reviews__item">
+    <li className="reviews__item">
       <div className="reviews__user user">
         <div className="reviews__avatar-wrapper user__avatar-wrapper">
-          <img className="reviews__avatar user__avatar" src={user.avatarUrl} width="54" height="54" alt="Review avatar" />
+          <img className="reviews__avatar user__avatar" src={avatarUrl} width="54" height="54" alt="Reviews avatar" />
         </div>
         <span className="reviews__user-name">
-          {user.name}
+          {name}
         </span>
       </div>
       <div className="reviews__info">
         <div className="reviews__rating rating">
           <div className="reviews__stars rating__stars">
-            <span style={{ width: '80%' }}></span>
-            <span className="visually-hidden">{rating}</span>
+            <span style={{ width: `${getRatingStyleData(rating)}%` }}></span>
+            <span className="visually-hidden">Rating</span>
           </div>
         </div>
         <p className="reviews__text">
           {comment}
         </p>
-        <time className="reviews__time" dateTime='2019-04-24'>{date}</time>
+        <time className="reviews__time" dateTime={date}>{displayedDate}</time>
       </div>
     </li>
   );

@@ -1,29 +1,31 @@
-import { Route, BrowserRouter, Routes } from 'react-router-dom';
-import { AppRoute, AuthorizationStatus } from '../../const';
-import MainPage from '../main-page/main-page';
-import PageNotFound from '../page-not-found/page-not-found';
-import LoginPage from '../login/login-page';
-import FavoritesPage from '../favorites/favorites-page';
+import {Route, Routes} from 'react-router-dom';
+import MainPage from '../../pages/main-page/main-page';
+import FavoritesPage from '../../pages/favorites-page/favorites-page';
+import AuthPage from '../../pages/auth-page/auth-page';
+import RoomPage from '../../pages/room-page/room-page';
+import NotFoundPage from '../../pages/not-found-page/not-found-page';
 import PrivateRoute from '../private-route/private-route';
-import OfferPage from '../property/property-page';
-import { Offers } from '../../types/offer';
+import Layout from '../layout/layout';
+import {AppRoute} from '../../const';
 
-type AppScreenProps = {
-  amountOffers: number;
-  offers: Offers;
-}
-
-function App({amountOffers, offers}: AppScreenProps): JSX.Element {
+function App(): JSX.Element {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path={AppRoute.Root} element={<MainPage amountOffers={amountOffers} offers={offers}/>} />
-        <Route path={AppRoute.Login} element={<LoginPage />} />
-        <Route path={AppRoute.Favorites} element={<PrivateRoute authorizationStatus={AuthorizationStatus.NoAuth}><FavoritesPage offers={offers} /></PrivateRoute>}/>
-        <Route path={AppRoute.Offer} element={<OfferPage offers={offers} />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path={AppRoute.Root} element={<Layout />}>
+        <Route index element={<MainPage />} />
+        <Route path={AppRoute.City} element={<MainPage />} />
+        <Route path={AppRoute.Login} element={<AuthPage />} />
+        <Route path={AppRoute.Favorites} element={
+          <PrivateRoute>
+            <FavoritesPage />
+          </PrivateRoute>
+        }
+        />
+        <Route path={AppRoute.NotFound} element={<NotFoundPage />} />
+        <Route path={AppRoute.RoomId} element={<RoomPage />} />
+      </Route>
+      <Route path='*' element={<NotFoundPage />} />
+    </Routes>
   );
 }
 

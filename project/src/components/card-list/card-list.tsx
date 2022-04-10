@@ -1,20 +1,37 @@
+import {memo} from 'react';
+import cn from 'classnames';
 import PlaceCard from '../place-card/place-card';
-import { Offers } from '../../types/offer';
+import {Offer} from '../../types/offers';
+import {PlaceCardListProps} from '../../types/other-types';
 
-type PlaceCardListProps = {
-  offers: Offers;
-  onOfferHover:(id:number) => void;
-}
+function CardList(props: PlaceCardListProps) {
+  const { offers, placeCardType } = props;
+  const isPlaceCard = placeCardType === 'placeCard';
+  const isPlaceNearby = placeCardType === 'placeNearby';
 
-function PlaceCardList({offers, onOfferHover}: PlaceCardListProps): JSX.Element {
+  const placeListClassName = cn('places__list', {
+    'cities__places-list': isPlaceCard,
+    'tabs__content': isPlaceCard,
+    'near-places__list': isPlaceNearby,
+  });
 
   return (
-    <div className='cities__places-list places__list tabs__content'> {
-      offers.map((offer) => <PlaceCard key={offer.id} offer={offer} onOfferHover={onOfferHover}/>)
-    }
+    <div className={placeListClassName}>
+      {offers.map((offer) => (
+        <PlaceCard
+          key={offer.id}
+          offer={offer}
+          onActiveOffer={props.onActiveOffer}
+          placeCardType={placeCardType}
+        />
+      ))}
     </div>
   );
-
 }
 
-export default PlaceCardList;
+export default memo(CardList, (prevProps, nextProps) => {
+  const isOfferIdsEqual = (prevOffers: Offer[], nextOffers: Offer[]) => prevOffers.every(
+    (item, index) => item.id === nextOffers[index].id && item.isFavorite === nextOffers[index].isFavorite);
+  return isOfferIdsEqual(prevProps.offers, nextProps.offers)
+    && prevProps.placeCardType === nextProps.placeCardType;
+});
